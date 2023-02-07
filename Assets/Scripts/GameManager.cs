@@ -65,8 +65,15 @@ public class GameManager : MonoBehaviour
 
     public void GiveOrder(Transform standPosition)
     {
-        moveOrderList.Add(standPosition);
+        if (moveOrderList.Count == 0 || moveOrderList.Last() != standPosition)
+        {
+            moveOrderList.Add(standPosition);
+        }
     }
 
     public List<Transform> GetOrderList() { return moveOrderList; }
+    public void OrderAccomplished()
+    {
+        moveOrderList.RemoveAt(0);
+    }
 }

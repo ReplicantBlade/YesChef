@@ -19,11 +19,6 @@ public class EventSystem : MonoBehaviour
     }
     public static EventSystem Get() { return _Instance; }
 
-    public delegate void ClickAction();
-    public static event ClickAction OnClick;
-    private void OnMouseDown()
-    {
-        Debug.Log(transform.tag);
-        OnClick?.Invoke();
-    }
+    //public delegate void ClickAction();
+    //public static event ClickAction OnClick;
 }

@@ -1,92 +1,72 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.XR;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class ChefController : MonoBehaviour
 {
-    public float moveSpeed = 0f;
-    public float maxSpeed = 0f;
-    public float decreaseFuelAmount = 0f;
+    [SerializeField] public float speed = 20f;
 
-    private Rigidbody2D myRigidbody;
-
+    private static List<Transform> movementPositionList = new List<Transform>();
     void Awake()
     {
-        myRigidbody = transform.GetComponent<Rigidbody2D>();
-    }
 
-    // Player Inputs
-    private void FixedUpdate()
-    {
-        //if (!Input.anyKey || playerManager.fuel <= 0)
-        //{
-        //    MovePlayer(Vector2.zero.normalized);
-        //}
-        //else
-        //{
-        //    if (Input.GetKey(KeyCode.W))
-        //    {
-        //        MovePlayer(Vector2.up.normalized);
-        //    }
-        //    if (Input.GetKey(KeyCode.S))
-        //    {
-        //        MovePlayer(Vector2.down.normalized);
-        //    }
-        //    if (Input.GetKey(KeyCode.D))
-        //    {
-        //        MovePlayer(Vector2.right.normalized);
-        //    }
-        //    if (Input.GetKey(KeyCode.A))
-        //    {
-        //        MovePlayer(Vector2.left.normalized);
-        //    }
-        //}
     }
 
     void Update()
     {
-        //CurrectPlayerPosition();
+        UpdateMovementOrder();
+
+        if (HaveTaskToDo())
+        {
+            Transform target = GetTargetToGo();
+            MoveTowards(target);
+            if (IsChefReachedTheTarget(target))
+            {
+                ChefTaskIsDone();
+            }
+        }
     }
 
-    void MovePlayer(Vector2 direction)
+    private void UpdateMovementOrder()
     {
-        //if (direction == Vector2.zero.normalized)
-        //{
-        //    myRigidbody.velocity -= myRigidbody.velocity / 8f;
-        //}
-        //else if (myRigidbody.velocity.magnitude >= maxSpeed)
-        //{
-        //    myRigidbody.AddForce(-myRigidbody.velocity.normalized * moveSpeed);
-        //}
-        //else 
-        //{
-        //    myRigidbody.AddForce(direction * moveSpeed);
-        //    playerManager.DecreaseFuel(decreaseFuelAmount);
-        //}
+        movementPositionList = new List<Transform>(GameManager.Instance.GetOrderList());
     }
 
-    private void CurrectPlayerPosition()
+    private bool HaveTaskToDo()
     {
-        //var pos = Camera.main.WorldToScreenPoint(transform.position);
-        //if (pos.x > (Screen.safeArea.xMax))
-        //{
-        //    Vector2 newpos = new(Screen.safeArea.xMin, pos.y);
-        //    transform.position = new Vector2(Camera.main.ScreenToWorldPoint(newpos).x, transform.position.y);
-        //}
-        //if (pos.x < Screen.safeArea.xMin)
-        //{
-        //    Vector2 newpos = new(Screen.safeArea.xMax, pos.y);
-        //    transform.position = new Vector2(Camera.main.ScreenToWorldPoint(newpos).x, transform.position.y);
-        //}
-        //if (pos.y > Screen.safeArea.yMax)
-        //{
-        //    Vector2 newpos = new(pos.x, Screen.safeArea.yMin);
-        //    transform.position = new Vector2(transform.position.x, Camera.main.ScreenToWorldPoint(newpos).y);
-        //}
-        //if (pos.y < Screen.safeArea.yMin)
-        //{
-        //    Vector2 newpos = new(pos.x, Screen.safeArea.yMax);
-        //    transform.position = new Vector2(transform.position.x, Camera.main.ScreenToWorldPoint(newpos).y);
-        //}
+        return movementPositionList.Count > 0;
+    }
+
+    private void ChefTaskIsDone()
+    {
+        GameManager.Instance.OrderAccomplished();
+    }
+
+    Transform GetTargetToGo()
+    {
+        return movementPositionList[0];
+    }
+
+    private void MoveTowards(Transform target)
+    {
+        if (target == null) return;
+
+        Vector3 direction = (target.position - transform.position).normalized;
+        direction.y = 0;
+        transform.position += speed * Time.deltaTime * direction;
+        transform.LookAt(target);
+        transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, 0);
+    }
+
+    private bool IsChefReachedTheTarget(Transform target)
+    {
+        float distance = Vector3.Distance(new Vector3(transform.position.x, 0, transform.position.z), new Vector3(target.position.x, 0, target.position.z));
+        if (distance <= 0.5f)
+        {
+            return true;
+        }
+        else return false;
     }
 }

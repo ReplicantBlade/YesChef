@@ -13,8 +13,6 @@ public class IntractableKitchenware : MonoBehaviour
     {
         highlightTargetRenderer = highlightTarget == null ? transform.GetComponent<Renderer>() : highlightTarget.transform.GetComponent<Renderer>();
         highlightTargetStartcolor = highlightTargetRenderer.material.color;
-
-        EventSystem.OnClick += SendOrder;
     }
     private void OnMouseEnter()
     {
@@ -25,14 +23,12 @@ public class IntractableKitchenware : MonoBehaviour
         highlightTargetRenderer.material.color = highlightTargetStartcolor;
     }
 
+    private void OnMouseDown()
+    {
+        SendOrder();
+    }
     private void SendOrder()
     {
-        Debug.Log(transform.tag);
         GameManager.Instance.GiveOrder(chefStandPosition);
-    }
-
-    private void OnDestroy()
-    {
-        EventSystem.OnClick -= SendOrder;
     }
 }
