@@ -43,9 +43,10 @@ GameObject:
   - component: {fileID: 2523456570851895601}
   - component: {fileID: 2523456570851895602}
   - component: {fileID: 2523456570851895603}
+  - component: {fileID: 1104896283}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -116,6 +117,20 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!136 &1104896283
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2523456570851895605}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 473.16852
+  m_Height: 1083.4587
+  m_Direction: 1
+  m_Center: {x: -28.517567, y: 57.631035, z: 64.71755}
 --- !u!1001 &5860059563109325541
 PrefabInstance:
   m_ObjectHideFlags: 0
