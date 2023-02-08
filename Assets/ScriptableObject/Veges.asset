@@ -15,4 +15,7 @@ MonoBehaviour:
   ingredientName: Veges
   rawStylePrefab: {fileID: 7220715048733755028, guid: a8ba08d231de977479b3f167d6bfaf59, type: 3}
   CookedStylePrefab: {fileID: 5063262954617627847, guid: 9b1f9d7511569aa408c32916b0878c7f, type: 3}
+  sprite: {fileID: 21300000, guid: 15b2502033a729e4ab1ac96e29f007ef, type: 3}
   score: 20
+  needChopping: 1
+  needCooking: 0

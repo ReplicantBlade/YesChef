@@ -15,4 +15,7 @@ MonoBehaviour:
   ingredientName: Meat
   rawStylePrefab: {fileID: 5489498632184970839, guid: 1179b218216b1a14a90cb09945973909, type: 3}
   CookedStylePrefab: {fileID: 6513301523857371461, guid: 7da0b71e3cfab144283297555f7d4f72, type: 3}
+  sprite: {fileID: 21300000, guid: deeb4a7a572b03c4a997a67ca1f3958c, type: 3}
   score: 30
+  needChopping: 0
+  needCooking: 1

@@ -8,7 +8,8 @@ public class ChefController : MonoBehaviour
 {
     [SerializeField] public float speed = 20f;
 
-    private static List<Transform> movementPositionList = new List<Transform>();
+    private static List<Transform> movementPositionList = new();
+    private bool chefIsBusy { get;  set; } = false;
     void Awake()
     {
 
@@ -31,7 +32,8 @@ public class ChefController : MonoBehaviour
 
     private void UpdateMovementOrder()
     {
-        movementPositionList = new List<Transform>(GameManager.Instance.GetOrderList());
+        if (!chefIsBusy)
+            movementPositionList = new List<Transform>(GameManager.Instance.GetOrderList());
     }
 
     private bool HaveTaskToDo()
@@ -41,7 +43,7 @@ public class ChefController : MonoBehaviour
 
     private void ChefTaskIsDone()
     {
-        GameManager.Instance.OrderAccomplished();
+        GameManager.Instance.OrderAccomplish();
     }
 
     Transform GetTargetToGo()

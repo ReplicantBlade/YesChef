@@ -29,6 +29,6 @@ public class IntractableKitchenware : MonoBehaviour
     }
     private void SendOrder()
     {
-        GameManager.Instance.GiveOrder(chefStandPosition);
+        GameManager.Instance.MovementOrder(chefStandPosition);
     }
 }
