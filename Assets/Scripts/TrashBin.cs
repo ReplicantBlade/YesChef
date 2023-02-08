@@ -1,18 +1,24 @@
-using System.Collections;
-using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class TrashBin : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    private static ChefPlateManager _chefPlate;
+    private void OnTriggerEnter(Collider other)
     {
-        
+        if (!other.CompareTag("Player")) return;
+        if (_chefPlate == null)
+            _chefPlate = other.transform.GetComponent<ChefPlateManager>();
+        CleanChefPlate();
     }
 
-    // Update is called once per frame
-    void Update()
+    private static void CleanChefPlate()
     {
-        
-    }
+        if (_chefPlate == null) return;
+        var ingredients = _chefPlate.GetAllInHandIngredients().Keys.ToList();
+        foreach (var key in ingredients)
+        {
+            _chefPlate.GetIngredient(key);
+        }
+    } 
 }

@@ -5,53 +5,50 @@ using UnityEngine;
 public class ChefPlateManager : MonoBehaviour
 {
     [SerializeField] private GameObject Plate;
-    private readonly List<Transform> slots = new();
-    private readonly Dictionary<int ,Ingredient> inHandIngredients = new();
+    private readonly List<Transform> _slots = new();
+    private readonly Dictionary<int ,Ingredient> _inHandIngredients = new();
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        for (int i = 0; i < Plate.transform.childCount; i++)
+        for (var i = 0; i < Plate.transform.childCount; i++)
         {
-            slots.Add(Plate.transform.GetChild(i));
+            _slots.Add(Plate.transform.GetChild(i));
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     public Dictionary<int ,Ingredient> GetAllInHandIngredients()
     {
-        return inHandIngredients;
+        return _inHandIngredients;
     }
 
-    public bool RemoveIngredientFromPlate(int slot)
+    public Ingredient GetIngredient(int slot)
     {
-        if (inHandIngredients.ContainsKey(slot))
-        {
-            inHandIngredients.Remove(slot);
-            DestroyIngredientVisual(slot);
-            return true;
-        }
-        return false;
+        var item = _inHandIngredients[slot];
+        return RemoveIngredientFromPlate(slot) ? item : null;
     }
 
-    public bool AddIngredientToPlate(Ingredient newIngredient)
+    public bool AddIngredient(Ingredient newIngredient)
     {
-        int slotNum = GetFreeSlotNumber();
+        var slotNum = GetFreeSlotNumber();
         if (slotNum == -1) return false;
-        inHandIngredients.Add(slotNum, newIngredient);
-        InstantiateIngredientVisual(newIngredient.GetStylePrefab(), slots[slotNum]);
+        _inHandIngredients.Add(slotNum, newIngredient);
+        InstantiateIngredientVisual(newIngredient.GetStylePrefab(), _slots[slotNum]);
+        return true;
+    }
+
+    private bool RemoveIngredientFromPlate(int slot)
+    {
+        if (!_inHandIngredients.ContainsKey(slot)) return false;
+        _inHandIngredients.Remove(slot);
+        DestroyIngredientVisual(slot);
         return true;
     }
 
     private int GetFreeSlotNumber()
     {
-        for (int i = 0; i < slots.Count; i++)
+        for (var i = 0; i < _slots.Count; i++)
         {
-            if (inHandIngredients.ContainsKey(i) == false)
+            if (_inHandIngredients.ContainsKey(i) == false)
             {
                 return i;
             }
@@ -61,11 +58,11 @@ public class ChefPlateManager : MonoBehaviour
 
     private void DestroyIngredientVisual(int slot)
     {
-        Destroy(slots[slot].GetChild(0).gameObject);
+        Destroy(_slots[slot].GetChild(0).gameObject);
     }
 
-    private void InstantiateIngredientVisual(GameObject visual, Transform parent)
+    private static void InstantiateIngredientVisual(GameObject visual, Transform parent)
     {
-        Instantiate(visual, parent.position, Quaternion.identity ,parent);
+        Instantiate(visual, parent.position, visual.transform.rotation ,parent);
     }
 }

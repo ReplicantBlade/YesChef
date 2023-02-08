@@ -1,42 +1,33 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
+using System.Linq;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class Refrigerator : MonoBehaviour
 {
     [SerializeField] private TMPro.TMP_Dropdown dropdown;
     [SerializeField] private UIManager uiManager;
-    [SerializeField] private List<Ingredient> inventory = new();
-
+    private static List<Ingredient> _inventory = new ();
+    private static ChefPlateManager _chefPlate;
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
+        _inventory = Utilities.Instance.GetAvailableIngredients();
         FillDropDown();
         CloseDropDown();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
-        {
-            OpenDropDownMenu();
-        }
+        if (!other.CompareTag("Player")) return;
+        OpenDropDownMenu();
+        _chefPlate = other.transform.GetComponent<ChefPlateManager>();
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player"))
-        {
-            CloseDropDown();
-        }
+        if (!other.CompareTag("Player")) return;
+        CloseDropDown();
+        _chefPlate = null;
     }
 
     private void OpenDropDownMenu() 
@@ -49,24 +40,32 @@ public class Refrigerator : MonoBehaviour
     {
         dropdown.interactable = false;
         dropdown.Hide();
+        ResetDropDown();
+    }
+
+    private void ResetDropDown()
+    {
+        dropdown.value = 0;
+    }
+
+    private void DropdownValueChanged(int value)
+    {
+        if (value < 1) return;
+        var ingredientIndex = value - 1;
+        GiveChefChosenIngredient(ingredientIndex);
+        ResetDropDown();
+    }
+
+    private static void GiveChefChosenIngredient(int ingredientIndex)
+    {
+        if (_chefPlate == null) return;
+        _chefPlate.AddIngredient(_inventory[ingredientIndex]);
     }
 
     private void FillDropDown()
     {
-        List<string> options = new();
-        List<Sprite> sprites = new();
-        foreach (Ingredient ingredient in inventory)
-        {
-            options.Add(ingredient.GetName());
-            sprites.Add(ingredient.GetSprite());
-        }
-        uiManager.FillDropDownOption(dropdown, options, sprites);
-        dropdown.onValueChanged.AddListener(delegate { DropdownValueChanged(); });
-    }
-
-    private void DropdownValueChanged()
-    {
-        Debug.Log(inventory[dropdown.value].GetName());
-        CloseDropDown();
+        var options = _inventory.Select(ingredient => ingredient.GetName()).ToList();
+        uiManager.FillDropDownOption(dropdown, options);
+        dropdown.onValueChanged.AddListener(delegate { DropdownValueChanged(dropdown.value); });
     }
 }

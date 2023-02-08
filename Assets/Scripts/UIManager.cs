@@ -10,17 +10,18 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-    public void FillDropDownOption(TMPro.TMP_Dropdown dropdown, List<string> options ,List<Sprite> sprites)
+    public void FillDropDownOption(TMPro.TMP_Dropdown dropdown, List<string> options)
     {
         dropdown.ClearOptions();
+        dropdown.options.Add(new TMPro.TMP_Dropdown.OptionData
+        {
+            text = "Refrigerator",
+        });
         for (int i = 0; i < options.Count; i++)
         {
-            TMPro.TMP_Dropdown.OptionData data = new()
-            {
+            dropdown.options.Add(new TMPro.TMP_Dropdown.OptionData{
                 text = options[i],
-                image = sprites[i],
-            };
-            dropdown.options.Add(data);
+            });
         }
     }
 

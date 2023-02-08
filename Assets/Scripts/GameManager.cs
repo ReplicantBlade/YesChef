@@ -83,7 +83,7 @@ public class GameManager : MonoBehaviour
     }
     private void UpdateGameTimer()
     {
-        string time = Utilities.Instance.ToTimeString(currentLefttime);
+        var time = Utilities.Instance.ToTimeString(currentLefttime);
         uiManager.ChangeText(gameTimer, time);
         
     }

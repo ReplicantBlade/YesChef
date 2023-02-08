@@ -13,7 +13,7 @@ public class Ingredient : ScriptableObject
     [SerializeField] private bool needChopping;
     [SerializeField] private bool needCooking;
 
-    private bool isCooked = false;
+    private bool isCooked { get; set; } = false;
     public void Cook()
     {
         isCooked= true;
