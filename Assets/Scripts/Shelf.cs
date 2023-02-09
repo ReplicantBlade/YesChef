@@ -67,16 +67,20 @@ public class Shelf : MonoBehaviour
     {
         if(!HaveInProgressOrder()) return;
         var totalIngredientsInOrder = _inProgressOrder.Count;
-        var localStorage = _ingredientStorage;
-        var localOrders = _inProgressOrder;
-        foreach (var ingredientModel in localStorage)
+        var localCloneStorage = new List<IngredientModel>(_ingredientStorage);
+        var localCloneOrders = new List<IngredientModel>(_inProgressOrder);
+        for (int i = 0; i < localCloneStorage.Count; i++)
         {
+            var ingredientModel = localCloneStorage[i];
             var storageIngredient = ingredientModel.Ingredient;
             if (storageIngredient.GetCookTime() > 0 && !ingredientModel.IsCooked) return;
-            foreach (var model in localOrders)
+            for (int j = 0; j < localCloneOrders.Count; j++)
             {
+                var model = localCloneOrders[j];
                 var orderIngredient = model.Ingredient;
                 if (orderIngredient.GetName() != storageIngredient.GetName()) continue;
+                //localCloneStorage.Remove(ingredientModel);
+                localCloneOrders.Remove(model);
                 totalIngredientsInOrder--;
                 if (totalIngredientsInOrder <= 0)
                 {
