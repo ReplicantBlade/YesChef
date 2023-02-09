@@ -1,12 +1,7 @@
-using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
-using Random = UnityEngine.Random;
-using System.IO;
-using TMPro;
-using Unity.VisualScripting;
+
 
 public class GameManager : MonoBehaviour
 {
@@ -68,7 +63,8 @@ public class GameManager : MonoBehaviour
     {
         state = GameState.Pause;
     }
-    public void EndGame()
+
+    private void EndGame()
     {
         state = GameState.End;
     }
@@ -97,6 +93,7 @@ public class GameManager : MonoBehaviour
     public List<Transform> GetOrderList() { return moveOrderList; }
     public void OrderAccomplish()
     {
-        moveOrderList.RemoveAt(0);
+        if (moveOrderList.Count > 0)
+            moveOrderList.RemoveAt(0);
     }
 }

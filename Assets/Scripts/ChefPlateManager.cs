@@ -1,38 +1,41 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class ChefPlateManager : MonoBehaviour
 {
-    [SerializeField] private GameObject Plate;
+    [SerializeField] private GameObject plate;
     private readonly List<Transform> _slots = new();
-    private readonly Dictionary<int ,Ingredient> _inHandIngredients = new();
-    // Start is called before the first frame update
+    private readonly Dictionary<int ,IngredientModel> _inHandIngredients = new();
     private void Start()
     {
-        for (var i = 0; i < Plate.transform.childCount; i++)
+        for (var i = 0; i < plate.transform.childCount; i++)
         {
-            _slots.Add(Plate.transform.GetChild(i));
+            _slots.Add(plate.transform.GetChild(i));
         }
+
+        PlateVisualHandler();
     }
 
-    public Dictionary<int ,Ingredient> GetAllInHandIngredients()
+    public Dictionary<int ,IngredientModel> GetAllInHandIngredients()
     {
         return _inHandIngredients;
     }
 
-    public Ingredient GetIngredient(int slot)
+    public IngredientModel GetIngredient(int slot)
     {
         var item = _inHandIngredients[slot];
         return RemoveIngredientFromPlate(slot) ? item : null;
     }
 
-    public bool AddIngredient(Ingredient newIngredient)
+    public bool AddIngredient(IngredientModel newIngredient)
     {
         var slotNum = GetFreeSlotNumber();
         if (slotNum == -1) return false;
         _inHandIngredients.Add(slotNum, newIngredient);
-        InstantiateIngredientVisual(newIngredient.GetStylePrefab(), _slots[slotNum]);
+        InstantiateIngredientVisual(newIngredient.Ingredient.GetStylePrefab(newIngredient.IsCooked), _slots[slotNum]);
+        PlateVisualHandler();
         return true;
     }
 
@@ -41,6 +44,7 @@ public class ChefPlateManager : MonoBehaviour
         if (!_inHandIngredients.ContainsKey(slot)) return false;
         _inHandIngredients.Remove(slot);
         DestroyIngredientVisual(slot);
+        PlateVisualHandler();
         return true;
     }
 
@@ -64,5 +68,10 @@ public class ChefPlateManager : MonoBehaviour
     private static void InstantiateIngredientVisual(GameObject visual, Transform parent)
     {
         Instantiate(visual, parent.position, visual.transform.rotation ,parent);
+    }
+
+    private void PlateVisualHandler()
+    {
+        plate.SetActive(_inHandIngredients.Count > 0);
     }
 }

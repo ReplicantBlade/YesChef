@@ -9,6 +9,8 @@ TagManager:
   - Refrigerator
   - TrashBin
   - Shelf
+  - UIManager
+  - GameManager
   layers:
   - Default
   - TransparentFX

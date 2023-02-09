@@ -6,8 +6,8 @@ public class Refrigerator : MonoBehaviour
 {
     [SerializeField] private TMPro.TMP_Dropdown dropdown;
     [SerializeField] private UIManager uiManager;
-    private static List<Ingredient> _inventory = new ();
-    private static ChefPlateManager _chefPlate;
+    private List<Ingredient> _inventory = new ();
+    private ChefPlateManager _chefPlate;
     // Start is called before the first frame update
     private void Start()
     {
@@ -51,15 +51,17 @@ public class Refrigerator : MonoBehaviour
     private void DropdownValueChanged(int value)
     {
         if (value < 1) return;
+        // (value - 1) is because the first option of DropDown list is not a Ingredient
         var ingredientIndex = value - 1;
         GiveChefChosenIngredient(ingredientIndex);
         ResetDropDown();
     }
 
-    private static void GiveChefChosenIngredient(int ingredientIndex)
+    private void GiveChefChosenIngredient(int ingredientIndex)
     {
         if (_chefPlate == null) return;
-        _chefPlate.AddIngredient(_inventory[ingredientIndex]);
+        var newIngredient = new IngredientModel(_inventory[ingredientIndex]);
+        _chefPlate.AddIngredient(newIngredient);
     }
 
     private void FillDropDown()

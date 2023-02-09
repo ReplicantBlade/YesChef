@@ -1,11 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
-using TMPro;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
@@ -17,10 +11,10 @@ public class UIManager : MonoBehaviour
         {
             text = "Refrigerator",
         });
-        for (int i = 0; i < options.Count; i++)
+        foreach (var t in options)
         {
             dropdown.options.Add(new TMPro.TMP_Dropdown.OptionData{
-                text = options[i],
+                text = t,
             });
         }
     }
@@ -28,5 +22,10 @@ public class UIManager : MonoBehaviour
     public void ChangeText(TMPro.TextMeshProUGUI textMeshPro, string text)
     {
         textMeshPro.text = text;
+    }
+
+    public void FillImage(Image img ,float amount)
+    {
+        img.fillAmount = amount < 1 ? amount : 1;
     }
 }
