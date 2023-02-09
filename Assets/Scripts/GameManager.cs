@@ -19,13 +19,13 @@ public class GameManager : MonoBehaviour
         }
     }
     public static GameManager Get() { return _Instance; }
-    public enum GameState
+    public enum RestaurantState
     {
-        OnGoing,
-        Pause,
-        End
+        Open,
+        Break,
+        Close
     }
-    public GameState state { get; set; } = new GameState();
+    public RestaurantState state { get; set; } = new RestaurantState();
 
     public float GameDurationInSec = 60 * 3;
     public UIManager uiManager;
@@ -34,22 +34,22 @@ public class GameManager : MonoBehaviour
     private readonly List<Transform> moveOrderList = new();
     private float currentLefttime;
 
-    void Start()
+    private void Start()
     {
         currentLefttime = GameDurationInSec;
-        state = GameState.OnGoing;
+        state = RestaurantState.Open;
     }
 
-    void Update()
+    private void Update()
     {
         switch (state)
         {
-            case GameState.OnGoing:
+            case RestaurantState.Open:
                 CountdownTime();
                 break;
-            case GameState.Pause:
+            case RestaurantState.Break:
                 break;
-            case GameState.End:
+            case RestaurantState.Close:
                 break;
             default:
                 break;
@@ -57,16 +57,16 @@ public class GameManager : MonoBehaviour
     }
     public void StartGame()
     {
-        state = GameState.OnGoing;
+        state = RestaurantState.Open;
     }
     public void PauseGame()
     {
-        state = GameState.Pause;
+        state = RestaurantState.Break;
     }
 
     private void EndGame()
     {
-        state = GameState.End;
+        state = RestaurantState.Close;
     }
     private void CountdownTime()
     {

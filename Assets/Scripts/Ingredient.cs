@@ -1,16 +1,18 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [CreateAssetMenu(fileName = "Ingredient", menuName = "Ingredient", order = 0)]
 public class Ingredient : ScriptableObject
 {
     [SerializeField] private string ingredientName;
     [SerializeField] private GameObject rawStylePrefab;
-    [SerializeField] private GameObject CookedStylePrefab;
+    [SerializeField] private GameObject cookedStylePrefab;
     [SerializeField] private Sprite sprite;
     [SerializeField] private int score;
     [SerializeField] private float cookTime;
+    [SerializeField] private int chance;
     [SerializeField] private bool needChopping;
-    [SerializeField] private bool needCooking;
+    [SerializeField] private bool needFire;
     
     public string GetName()
     {
@@ -18,7 +20,7 @@ public class Ingredient : ScriptableObject
     }
     public GameObject GetStylePrefab(bool isCooked)
     {
-        return isCooked ? CookedStylePrefab : rawStylePrefab;
+        return isCooked ? cookedStylePrefab : rawStylePrefab;
     }
     public Sprite GetSprite()
     {
@@ -32,31 +34,34 @@ public class Ingredient : ScriptableObject
     {
         return cookTime;
     }
+    public int GetChance()
+    {
+        return chance;
+    }
     public bool NeedChopping()
     {
         return needChopping;
     }
 
-    public bool NeedCooking()
+    public bool NeedFire()
     {
-        return needCooking;
+        return needFire;
     }
 }
 
 public class IngredientModel
 {
     public Ingredient Ingredient { get; }
-    private bool _isCooked;
 
     public IngredientModel(Ingredient item)
     {
         Ingredient = item;
     }
     
-    public bool IsCooked => _isCooked;
+    public bool IsCooked { get; private set; }
 
     public void Cook()
     {
-        _isCooked = true;
+        IsCooked = true;
     }
 }

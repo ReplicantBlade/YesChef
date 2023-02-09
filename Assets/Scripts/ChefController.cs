@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -44,7 +43,7 @@ public class ChefController : MonoBehaviour
 
     private void MoveTowards(Transform target)
     {
-        if (target == null) return;
+        if (ReferenceEquals(target, null)) return;
 
         var direction = (target.position - transform.position).normalized;
         direction.y = 0;

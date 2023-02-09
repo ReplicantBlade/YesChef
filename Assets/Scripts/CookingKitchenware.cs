@@ -7,7 +7,7 @@ using UnityEngine.Serialization;
 [System.Serializable]
 public class CookPositions
 {
-    public CountDownTimer timer;
+    public CounterManager timer;
     public Transform transform;
 }
 public class CookingKitchenware : MonoBehaviour
@@ -41,17 +41,17 @@ public class CookingKitchenware : MonoBehaviour
     }
     private bool CheckWareDuty(Ingredient ingredient)
     {
-        return ingredient.NeedChopping() == chopVeges || ingredient.NeedCooking() == cookMeat;
+        return (ingredient.NeedChopping() == chopVeges || ingredient.NeedFire() == cookMeat) && ingredient.GetCookTime() > 0;
     }
     private IEnumerator StartChopping(IngredientModel cookingItem, ChefController chefController) {
         if (keepChefBusy) chefController.ChefIsBusy = true;
         var cookPosition = PlaceIngredientOnKitchenware(cookingItem);
-        cookPosition.timer.Initial(cookingItem.Ingredient.GetCookTime());
+        cookPosition.timer.InitialCountDown(cookingItem.Ingredient.GetCookTime());
         cookingItem.Cook();
         yield return new WaitForSeconds(cookingItem.Ingredient.GetCookTime());
         if (keepChefBusy) chefController.ChefIsBusy = false;
         _cookedIngredient.Add(cookingItem);
-        if (_chefPlate == null) yield break;
+        if (ReferenceEquals(_chefPlate, null)) yield break;
         GiveChefOneCookedItems();
     }
     private CookPositions GetFreePosition()

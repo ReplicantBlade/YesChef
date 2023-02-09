@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Object = UnityEngine.Object;
+using Random = System.Random;
 
 public sealed class Utilities
 {
@@ -48,5 +50,23 @@ public sealed class Utilities
             _inventory.Add((Ingredient)ingredient);
         }
         return _inventory;
+    }
+    public T GetWeightedRandomItem<T>(List<T> items, List<int> weights)
+    {
+        var totalWeight = 0;
+        foreach (var weight in weights)
+        {
+            totalWeight += weight;
+        }
+        var randomIndex = new Random().Next(0, totalWeight);
+        for (var i = 0; i < items.Count; i++)
+        {
+            if (randomIndex < weights[i])
+            {
+                return items[i];
+            }
+            randomIndex -= weights[i];
+        }
+        return default(T);
     }
 }

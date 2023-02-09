@@ -2,17 +2,19 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CountDownTimer : MonoBehaviour
+public class CounterManager : MonoBehaviour
 {
     private enum State
     {
-        Start,
+        StartCountDown,
+        StartCountUp,
         Stop
     }
     [SerializeField] private TMPro.TextMeshProUGUI counterText;
     [SerializeField] private Image counterImage;
     private UIManager _uiManager;
     private State _counterState;
+    
     private float _timer;
     private float _timerLimit;
     private void Start()
@@ -25,8 +27,11 @@ public class CountDownTimer : MonoBehaviour
     {
         switch (_counterState)
         {
-            case State.Start:
-                CountdownTime();
+            case State.StartCountDown:
+                Countdown();
+                break;            
+            case State.StartCountUp:
+                CountUp();
                 break;
             case State.Stop:
                 Stop();
@@ -36,24 +41,31 @@ public class CountDownTimer : MonoBehaviour
         }
     }
     
-    public void Initial(float time)
+    public void InitialCountDown(float sec)
     {
-        _counterState = State.Start;
-        SetTimer(time);
+        _counterState = State.StartCountDown;
+        SetTime(sec ,sec);
         Show();
     }
     
-    private void Stop()
+    public void InitialCountUp(float secLimit)
+    {
+        _counterState = State.StartCountUp;
+        SetTime(0f ,secLimit);
+        Show();
+    }
+    
+    public void Stop()
     {
         _counterState = State.Stop;
-        SetTimer(0f);
+        SetTime(0f,0f);
         Hide();
     }
 
-    private void SetTimer(float t)
+    private void SetTime(float startTime ,float limit)
     {
-        _timer = t;
-        _timerLimit = _timer;
+        _timer = startTime;
+        _timerLimit = limit;
     }
 
     private void Show()
@@ -66,20 +78,32 @@ public class CountDownTimer : MonoBehaviour
         transform.gameObject.SetActive(false);
     }
     
-    private void CountdownTime()
+    private void Countdown()
     {
         _timer -= Time.deltaTime;
         if (_timer <= 0)
         {
             _counterState = State.Stop;
         }
-        UpdateGameTimer();
+        UpdateGameTimer(_timer);
     }
-    private void UpdateGameTimer()
+    
+    private void CountUp()
     {
-        var time = Utilities.Instance.ToTimeString(_timer);
+        _timer += Time.deltaTime;
+        if (_timerLimit > 0 && _timer >= _timerLimit)
+        {
+            _counterState = State.Stop;
+        }
+        UpdateGameTimer(_timer);
+    }
+    
+    private void UpdateGameTimer(float sec)
+    {
+        var time = Utilities.Instance.ToTimeString(sec);
         _uiManager.ChangeText(counterText, time);
+        if (ReferenceEquals(counterImage, null)) return;
         var fillAmount = _timer / _timerLimit;
-        _uiManager.FillImage(counterImage ,fillAmount);
+        _uiManager.FillImage(counterImage, fillAmount);
     }
 }
