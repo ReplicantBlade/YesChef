@@ -100,7 +100,7 @@ public class GameManager : MonoBehaviour
     }
     public void MovementOrder(Transform standPosition)
     {
-        if ((_moveOrderList.Count == 0 || _moveOrderList.Last() != standPosition) && RestaurantStatus == RestaurantState.Open)
+        if (RestaurantStatus == RestaurantState.Open)
         {
             _moveOrderList.Add(standPosition);
         }

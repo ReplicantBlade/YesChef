@@ -13,7 +13,7 @@ public class CounterManager : MonoBehaviour
     [SerializeField] private TMPro.TextMeshProUGUI counterText;
     [SerializeField] private Image counterImage;
     private UIManager _uiManager;
-    private CounterState _counterCounterState;
+    private CounterState _counterState;
     
     private float _timer;
     private float _timerLimit;
@@ -25,7 +25,7 @@ public class CounterManager : MonoBehaviour
 
     private void Update()
     {
-        switch (_counterCounterState)
+        switch (_counterState)
         {
             case CounterState.StartCountDown:
                 Countdown();
@@ -41,14 +41,14 @@ public class CounterManager : MonoBehaviour
     
     public void InitialCountDown(float sec)
     {
-        _counterCounterState = CounterState.StartCountDown;
+        _counterState = CounterState.StartCountDown;
         SetTime(sec ,sec);
         Show();
     }
     
     public void InitialCountUp(float secLimit)
     {
-        _counterCounterState = CounterState.StartCountUp;
+        _counterState = CounterState.StartCountUp;
         SetTime(0f ,secLimit);
         Show();
     }
@@ -60,24 +60,24 @@ public class CounterManager : MonoBehaviour
 
     public CounterState GetState()
     {
-        return _counterCounterState;
+        return _counterState;
     }
 
     public void Pause()
     {
-        _counterCounterState = CounterState.Pause;
+        _counterState = CounterState.Pause;
     }
     public void ResumeCounterDown()
     {
-        _counterCounterState = CounterState.StartCountDown;
+        _counterState = CounterState.StartCountDown;
     }
     public void ResumeCounterUp()
     {
-        _counterCounterState = CounterState.StartCountUp;
+        _counterState = CounterState.StartCountUp;
     }
     public void Stop()
     {
-        _counterCounterState = CounterState.Stop;
+        _counterState = CounterState.Stop;
         SetTime(0f,0f);
         Hide();
     }
@@ -103,7 +103,7 @@ public class CounterManager : MonoBehaviour
         _timer -= Time.deltaTime;
         if (_timer <= 0)
         {
-            _counterCounterState = CounterState.Stop;
+            _counterState = CounterState.Stop;
         }
         UpdateGameTimer(_timer);
     }
@@ -113,7 +113,7 @@ public class CounterManager : MonoBehaviour
         _timer += Time.deltaTime;
         if (_timerLimit > 0 && _timer >= _timerLimit)
         {
-            _counterCounterState = CounterState.Stop;
+            _counterState = CounterState.Stop;
         }
         UpdateGameTimer(_timer);
     }
@@ -121,7 +121,12 @@ public class CounterManager : MonoBehaviour
     private void UpdateGameTimer(float sec)
     {
         var time = Utilities.Instance.ToTimeString(sec);
-        _uiManager.ChangeText(counterText, time);
+
+        if (_counterState == CounterState.StartCountDown && sec < _timerLimit/3) _uiManager.ChangeText(counterText, time, Color.red);
+        else if (_counterState == CounterState.StartCountUp && sec > 20) _uiManager.ChangeText(counterText, time, Color.red);
+        else if (_counterState == CounterState.Pause) _uiManager.ChangeText(counterText, time, Color.blue);
+        else _uiManager.ChangeText(counterText, time ,Color.white);
+        
         if (ReferenceEquals(counterImage, null)) return;
         var fillAmount = _timer / _timerLimit;
         _uiManager.FillImage(counterImage, fillAmount);

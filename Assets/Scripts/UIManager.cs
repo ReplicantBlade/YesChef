@@ -58,9 +58,10 @@ public class UIManager : MonoBehaviour
             });
         }
     }
-    public void ChangeText(TMPro.TextMeshProUGUI textMeshPro, string text)
+    public void ChangeText(TMPro.TextMeshProUGUI textMeshPro, string text, Color color = default)
     {
         textMeshPro.text = text;
+        if (color != default) textMeshPro.color = color;
     }
     public void FillImage(Image img ,float amount)
     {
