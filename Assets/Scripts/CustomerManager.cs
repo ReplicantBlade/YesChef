@@ -19,7 +19,7 @@ public class CustomerManager : MonoBehaviour
 
     private void Start()
     {
-        _inventory = Utilities.Instance.GetAvailableIngredients();
+        _inventory = GameManager.Instance.GetAvailableIngredients();
         if (totalIngredientCountChance.Count <= GameManager.Instance.maxCostumerOrderSize) return;
         totalIngredientCountChance.RemoveRange(GameManager.Instance.maxCostumerOrderSize, totalIngredientCountChance.Count - GameManager.Instance.maxCostumerOrderSize);
     }

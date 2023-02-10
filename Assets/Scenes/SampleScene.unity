@@ -5594,6 +5594,10 @@ MonoBehaviour:
   newHighScore: {fileID: 1195923827}
   currentGameScoreUI: {fileID: 1079842159}
   highestAchievedScoreUI: {fileID: 779575368}
+  allIngredients:
+  - {fileID: 11400000, guid: 9dc66c026d3502341be41be5b58ebc84, type: 2}
+  - {fileID: 11400000, guid: 0606fa9f6a994164ea68e764f9cbe3e0, type: 2}
+  - {fileID: 11400000, guid: 85c3591717e9df7418248f71cf5e0fc0, type: 2}
 --- !u!1 &1195923825
 GameObject:
   m_ObjectHideFlags: 0

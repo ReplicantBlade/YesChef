@@ -11,7 +11,7 @@ public class Refrigerator : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        _inventory = Utilities.Instance.GetAvailableIngredients();
+        _inventory = GameManager.Instance.GetAvailableIngredients();
         FillDropDown();
         CloseDropDown();
     }

@@ -4,7 +4,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
@@ -34,6 +33,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Animation newHighScore;
     [SerializeField] private TextMeshProUGUI currentGameScoreUI;
     [SerializeField] private TextMeshProUGUI highestAchievedScoreUI;
+    [SerializeField] private List<Ingredient> allIngredients = new();
     private readonly List<Transform> _moveOrderList = new();
     private int _highestAchievedScore;
     private int _currentGameScore;
@@ -110,6 +110,10 @@ public class GameManager : MonoBehaviour
     {
         if (_moveOrderList.Count > 0)
             _moveOrderList.RemoveAt(0);
+    }
+    public List<Ingredient> GetAvailableIngredients()
+    {
+        return allIngredients;
     }
     public void ReloadScene()
     {
