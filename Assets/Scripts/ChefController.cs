@@ -45,16 +45,23 @@ public class ChefController : MonoBehaviour
     {
         if (ReferenceEquals(target, null)) return;
 
-        var direction = (target.position - transform.position).normalized;
+        var transform1 = transform;
+        var position = transform1.position;
+        var direction = (target.position - position).normalized;
         direction.y = 0;
-        transform.position += speed * Time.deltaTime * direction;
-        transform.LookAt(target);
-        transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, 0);
+        position += speed * Time.deltaTime * direction;
+        transform1.position = position;
+        Transform transform2;
+        (transform2 = transform).LookAt(target);
+        transform2.eulerAngles = new Vector3(0, transform2.eulerAngles.y, 0);
     }
 
     private bool IsChefReachedTheTarget(Transform target)
     {
-        var distance = Vector3.Distance(new Vector3(transform.position.x, 0, transform.position.z), new Vector3(target.position.x, 0, target.position.z));
+        var transform1 = transform;
+        var position = transform1.position;
+        var position1 = target.position;
+        var distance = Vector3.Distance(new Vector3(position.x, 0, position.z), new Vector3(position1.x, 0, position1.z));
         return distance <= 0.5f;
     }
 }

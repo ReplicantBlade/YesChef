@@ -1,24 +1,19 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class EventSystem : MonoBehaviour
 {
-    private static EventSystem _Instance;    
-    public static EventSystem Instance { get { return _Instance; } }
+    private static EventSystem Instance { get; set; }
+
     private void Awake()
     {
-        if (_Instance != null && _Instance != this)
+        if (Instance != null && Instance != this)
         {
             Destroy(this.gameObject);
         }
         else
         {
-            _Instance = this;
+            Instance = this;
         }
     }
-    public static EventSystem Get() { return _Instance; }
-
-    //public delegate void ClickAction();
-    //public static event ClickAction OnClick;
+    public static EventSystem Get() { return Instance; }
 }

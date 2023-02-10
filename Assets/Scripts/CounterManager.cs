@@ -1,19 +1,19 @@
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class CounterManager : MonoBehaviour
 {
-    private enum State
+    public enum CounterState
     {
         StartCountDown,
         StartCountUp,
+        Pause,
         Stop
     }
     [SerializeField] private TMPro.TextMeshProUGUI counterText;
     [SerializeField] private Image counterImage;
     private UIManager _uiManager;
-    private State _counterState;
+    private CounterState _counterCounterState;
     
     private float _timer;
     private float _timerLimit;
@@ -25,39 +25,51 @@ public class CounterManager : MonoBehaviour
 
     private void Update()
     {
-        switch (_counterState)
+        switch (_counterCounterState)
         {
-            case State.StartCountDown:
+            case CounterState.StartCountDown:
                 Countdown();
                 break;            
-            case State.StartCountUp:
+            case CounterState.StartCountUp:
                 CountUp();
                 break;
-            case State.Stop:
+            case CounterState.Stop:
                 Stop();
                 break;
-            default:
-                throw new ArgumentOutOfRangeException();
         }
     }
     
     public void InitialCountDown(float sec)
     {
-        _counterState = State.StartCountDown;
+        _counterCounterState = CounterState.StartCountDown;
         SetTime(sec ,sec);
         Show();
     }
     
     public void InitialCountUp(float secLimit)
     {
-        _counterState = State.StartCountUp;
+        _counterCounterState = CounterState.StartCountUp;
         SetTime(0f ,secLimit);
         Show();
     }
-    
+
+    public float GetTime()
+    {
+        return _timer;
+    }
+
+    public CounterState GetState()
+    {
+        return _counterCounterState;
+    }
+
+    public void Pause()
+    {
+        _counterCounterState = CounterState.Pause;
+    }
     public void Stop()
     {
-        _counterState = State.Stop;
+        _counterCounterState = CounterState.Stop;
         SetTime(0f,0f);
         Hide();
     }
@@ -83,7 +95,7 @@ public class CounterManager : MonoBehaviour
         _timer -= Time.deltaTime;
         if (_timer <= 0)
         {
-            _counterState = State.Stop;
+            _counterCounterState = CounterState.Stop;
         }
         UpdateGameTimer(_timer);
     }
@@ -93,7 +105,7 @@ public class CounterManager : MonoBehaviour
         _timer += Time.deltaTime;
         if (_timerLimit > 0 && _timer >= _timerLimit)
         {
-            _counterState = State.Stop;
+            _counterCounterState = CounterState.Stop;
         }
         UpdateGameTimer(_timer);
     }

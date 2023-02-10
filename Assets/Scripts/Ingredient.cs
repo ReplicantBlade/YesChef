@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.Serialization;
 
 [CreateAssetMenu(fileName = "Ingredient", menuName = "Ingredient", order = 0)]
 public class Ingredient : ScriptableObject

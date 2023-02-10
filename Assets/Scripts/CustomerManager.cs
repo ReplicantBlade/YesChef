@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class CustomerManager : MonoBehaviour
 {
@@ -26,7 +25,7 @@ public class CustomerManager : MonoBehaviour
 
     private void Update()
     {
-        switch (GameManager.Instance.state)
+        switch (GameManager.Instance.State)
         {
             case GameManager.RestaurantState.Open:
                 CheckShelfList();
@@ -64,11 +63,11 @@ public class CustomerManager : MonoBehaviour
         {
             orderCount.Add(i+1);
         }
-        var howManyIngredientForOrder = Utilities.Instance.GetWeightedRandomItem<int>(orderCount ,totalIngredientCountChance);
+        var howManyIngredientForOrder = Utilities.Instance.GetWeightedRandomItem(orderCount ,totalIngredientCountChance);
         var ingredientsChance = _inventory.Select(ingredient => ingredient.GetChance()).ToList();
         for (var i = 0; i < howManyIngredientForOrder; i++)
         {
-            var item = Utilities.Instance.GetWeightedRandomItem<Ingredient>(_inventory, ingredientsChance);
+            var item = Utilities.Instance.GetWeightedRandomItem(_inventory, ingredientsChance);
             ingredientsForOrder.Add(new IngredientModel(item));
         }
         return ingredientsForOrder;

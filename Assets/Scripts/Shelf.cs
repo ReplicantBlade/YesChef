@@ -69,6 +69,7 @@ public class Shelf : MonoBehaviour
         var totalIngredientsInOrder = _inProgressOrder.Count;
         var localCloneStorage = new List<IngredientModel>(_ingredientStorage);
         var localCloneOrders = new List<IngredientModel>(_inProgressOrder);
+        var score = 0;
         for (int i = 0; i < localCloneStorage.Count; i++)
         {
             var ingredientModel = localCloneStorage[i];
@@ -79,25 +80,31 @@ public class Shelf : MonoBehaviour
                 var model = localCloneOrders[j];
                 var orderIngredient = model.Ingredient;
                 if (orderIngredient.GetName() != storageIngredient.GetName()) continue;
-                //localCloneStorage.Remove(ingredientModel);
                 localCloneOrders.Remove(model);
+                score += storageIngredient.GetScore();
                 totalIngredientsInOrder--;
                 if (totalIngredientsInOrder <= 0)
                 {
-                    AccomplishOrder();
+                    AccomplishOrder(score);
                     return;
                 };
             }
         }
     }
     
-    private void AccomplishOrder()
+    private void AccomplishOrder(int score)
     {
+        HandleScore(score - (int)timer.GetTime());
         _lastAccomplishOrderDateTime = DateTime.Now;
         timer.Stop();
         _inProgressOrder.Clear();
         ResetOrderView();
         RemoveAllIngredientInStorage();
+    }
+
+    private void HandleScore(int score)
+    {
+        
     }
     
     public DateTime GetLastAccomplishOrderDateTime()

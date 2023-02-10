@@ -5,95 +5,84 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    private static GameManager _Instance;
-    public static GameManager Instance { get { return _Instance; } }
+    public static GameManager Instance { get; private set; }
     private void Awake()
     {
-        if (_Instance != null && _Instance != this)
+        if (Instance != null && Instance != this)
         {
             Destroy(this.gameObject);
         }
         else
         {
-            _Instance = this;
+            Instance = this;
         }
     }
-    public static GameManager Get() { return _Instance; }
+    public static GameManager Get() { return Instance; }
     public enum RestaurantState
     {
         Open,
         Break,
         Close
     }
-    public RestaurantState state { get; set; } = new RestaurantState();
+    public RestaurantState State { get; set; }
 
-    public float GameDurationInSec = 60 * 3;
-    public UIManager uiManager;
-    public TMPro.TextMeshProUGUI gameTimer;
-
-    private readonly List<Transform> moveOrderList = new();
-    private float currentLefttime;
-
+    [SerializeField]private float gameDurationInSec = 60 * 3;
+    [SerializeField]private CounterManager timer;
+    private readonly List<Transform> _moveOrderList = new();
     private void Start()
     {
-        currentLefttime = GameDurationInSec;
-        state = RestaurantState.Open;
+        StartGame();
     }
-
     private void Update()
     {
-        switch (state)
+        switch (State)
         {
             case RestaurantState.Open:
-                CountdownTime();
+                CheckTimer();
                 break;
             case RestaurantState.Break:
+                
                 break;
             case RestaurantState.Close:
-                break;
-            default:
+                
                 break;
         }
     }
-    public void StartGame()
-    {
-        state = RestaurantState.Open;
-    }
-    public void PauseGame()
-    {
-        state = RestaurantState.Break;
-    }
 
-    private void EndGame()
+    private void CheckTimer()
     {
-        state = RestaurantState.Close;
-    }
-    private void CountdownTime()
-    {
-        currentLefttime -= Time.deltaTime;
-        if (currentLefttime <= 0)
+        if (timer.GetState() == CounterManager.CounterState.Stop || timer.GetTime() <= 0)
         {
             EndGame();
         }
-        UpdateGameTimer();
     }
-    private void UpdateGameTimer()
+
+    public void StartGame()
     {
-        var time = Utilities.Instance.ToTimeString(currentLefttime);
-        uiManager.ChangeText(gameTimer, time);
-        
+        State = RestaurantState.Open;
+        timer.InitialCountDown(gameDurationInSec);
+    }
+    public void PauseGame()
+    {
+        State = RestaurantState.Break;
+        timer.Pause();
+    }
+    private void EndGame()
+    {
+        State = RestaurantState.Close;
+        timer.Stop();
     }
     public void MovementOrder(Transform standPosition)
     {
-        if (moveOrderList.Count == 0 || moveOrderList.Last() != standPosition)
+        if (_moveOrderList.Count == 0 || _moveOrderList.Last() != standPosition)
         {
-            moveOrderList.Add(standPosition);
+            _moveOrderList.Add(standPosition);
         }
     }
-    public List<Transform> GetOrderList() { return moveOrderList; }
+    public IEnumerable<Transform> GetOrderList() { return _moveOrderList; }
     public void OrderAccomplish()
     {
-        if (moveOrderList.Count > 0)
-            moveOrderList.RemoveAt(0);
+        if (_moveOrderList.Count > 0)
+            _moveOrderList.RemoveAt(0);
     }
 }

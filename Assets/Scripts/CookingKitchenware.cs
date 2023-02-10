@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 [System.Serializable]
 public class CookPositions
@@ -17,7 +16,7 @@ public class CookingKitchenware : MonoBehaviour
     [SerializeField] private bool cookMeat;
     [SerializeField] private List<CookPositions> cookPositions;
     private ChefPlateManager _chefPlate;
-    private List<IngredientModel> _cookedIngredient = new();
+    private readonly List<IngredientModel> _cookedIngredient = new();
     private void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag("Player")) return;
