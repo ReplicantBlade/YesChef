@@ -13,29 +13,51 @@ public class CustomerManager : MonoBehaviour
 
     private void OnValidate()
     {
-        if (totalIngredientCountChance.Count <= _inventory.Count) return;
-        totalIngredientCountChance.RemoveRange(3, totalIngredientCountChance.Count - 3);
-        Debug.LogWarning("List length cannot be greater than 3 as mentioned in YesChef Doc");
+        if (totalIngredientCountChance.Count <= 3) return;
+        Debug.LogWarning("List length cannot be greater than maxCostumerOrderSize as mentioned in GameManager");
     }
 
     private void Start()
     {
         _inventory = Utilities.Instance.GetAvailableIngredients();
+        if (totalIngredientCountChance.Count <= GameManager.Instance.maxCostumerOrderSize) return;
+        totalIngredientCountChance.RemoveRange(GameManager.Instance.maxCostumerOrderSize, totalIngredientCountChance.Count - GameManager.Instance.maxCostumerOrderSize);
     }
 
     private void Update()
     {
-        switch (GameManager.Instance.State)
+        switch (GameManager.Instance.RestaurantStatus)
         {
             case GameManager.RestaurantState.Open:
                 CheckShelfList();
+                SetShelfTimerStatus(false);
                 break;
             case GameManager.RestaurantState.Break:
+                SetShelfTimerStatus(true);
                 break;
             case GameManager.RestaurantState.Close:
+                //ClearShelfOrderList();
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    private void SetShelfTimerStatus(bool pause)
+    {
+        foreach (var shelf in customersOrderShelf)
+        {
+            if (pause) shelf.PauseTimer();
+            else shelf.ResumeTimer();
+        }
+    }
+    
+    private void ClearShelfOrderList()
+    {
+        foreach (var shelf in customersOrderShelf)
+        {
+            shelf.RemoveAllIngredientInStorage();
+            shelf.AccomplishOrder(0);
         }
     }
 

@@ -67,6 +67,14 @@ public class CounterManager : MonoBehaviour
     {
         _counterCounterState = CounterState.Pause;
     }
+    public void ResumeCounterDown()
+    {
+        _counterCounterState = CounterState.StartCountDown;
+    }
+    public void ResumeCounterUp()
+    {
+        _counterCounterState = CounterState.StartCountUp;
+    }
     public void Stop()
     {
         _counterCounterState = CounterState.Stop;

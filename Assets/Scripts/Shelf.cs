@@ -2,27 +2,33 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class Shelf : MonoBehaviour
 {
     [SerializeField] private ScrollRect ingredientsView;
     [SerializeField] private GameObject ingredientsViewContentPrefab;
+    [SerializeField] private GameObject scorePointPrefab;
     [SerializeField] private CounterManager timer;
-    [FormerlySerializedAs("platePosition")] [SerializeField] private Transform shelfPlate;
+    [SerializeField] private Transform shelfPlate;
     
     private ChefPlateManager _chefPlate;
     private DateTime _lastAccomplishOrderDateTime;
     private List<IngredientModel> _inProgressOrder = new();
     private readonly List<IngredientModel> _ingredientStorage = new();
+    private UIManager _uiManager;
+
+    private void Start()
+    {
+        _uiManager = GameObject.FindWithTag("UIManager").GetComponent<UIManager>();
+    }
 
     private void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag("Player")) return;
         _chefPlate = other.transform.GetComponent<ChefPlateManager>();
-        if (_chefPlate.GetAllInHandIngredients().Count > 0 && IsShelfPlateEmptyToUse()) GetChefInHandIngredients();
-        else if (_chefPlate.GetAllInHandIngredients().Count == 0 && !IsShelfPlateEmptyToUse()) GiveChefIngredientsInStorage();
+        if (_chefPlate.GetAllInHandIngredients().Count > 0 && DoShelfPlateHaveFreeSpace()) GetChefInHandIngredients();
+        else if (_chefPlate.GetAllInHandIngredients().Count == 0 && _ingredientStorage.Count > 0) GiveChefIngredientsInStorage();
     }
 
     private void OnTriggerExit(Collider other)
@@ -87,14 +93,16 @@ public class Shelf : MonoBehaviour
                 {
                     AccomplishOrder(score);
                     return;
-                };
+                }
             }
         }
     }
     
-    private void AccomplishOrder(int score)
+    public void AccomplishOrder(int score)
     {
-        HandleScore(score - (int)timer.GetTime());
+        var calculatedScore = score - (int)timer.GetTime();
+        PopScorePoint(calculatedScore);
+        GameManager.Instance.NewScore(calculatedScore);
         _lastAccomplishOrderDateTime = DateTime.Now;
         timer.Stop();
         _inProgressOrder.Clear();
@@ -102,9 +110,13 @@ public class Shelf : MonoBehaviour
         RemoveAllIngredientInStorage();
     }
 
-    private void HandleScore(int score)
+    private void PopScorePoint(int score)
     {
-        
+        var ingredientsViewTransform = ingredientsView.transform;
+        var scorePoint = Instantiate(scorePointPrefab, ingredientsViewTransform.position,Quaternion.Euler(0,-90,0) ,ingredientsViewTransform);
+        _uiManager.ChangeText(scorePoint.GetComponent<TMPro.TextMeshProUGUI>() ,score > 0 ? $"+{score}" : $"{score}");
+        scorePoint.GetComponent<Animation>().Play(score > 0 ? "ScorePointPositive" : "ScorePointNegative");
+        Destroy(scorePoint.gameObject ,5);
     }
     
     public DateTime GetLastAccomplishOrderDateTime()
@@ -117,9 +129,9 @@ public class Shelf : MonoBehaviour
         return _inProgressOrder.Count > 0;
     }
 
-    private bool IsShelfPlateEmptyToUse()
+    private bool DoShelfPlateHaveFreeSpace()
     {
-        return shelfPlate.childCount == 0;
+        return shelfPlate.childCount < GameManager.Instance.maxCostumerOrderSize;
     }
 
     private void AddItemToOrderView(GameObject item)
@@ -148,17 +160,28 @@ public class Shelf : MonoBehaviour
         _ingredientStorage.Add(ingredientModel);
         var prefab = ingredientModel.Ingredient.GetStylePrefab(ingredientModel.IsCooked);
         var shelfPlatePosition = shelfPlate.position;
-        var position = IsShelfPlateEmptyToUse() ? 
+        var position = shelfPlate.childCount == 0 ? 
             shelfPlate.position : new Vector3(shelfPlatePosition.x ,shelfPlatePosition.y ,shelfPlate.GetChild(shelfPlate.childCount - 1).position.z + 3f);
         Instantiate(prefab, position, prefab.transform.rotation ,shelfPlate);
     }
     
-    private void RemoveAllIngredientInStorage()
+    public void RemoveAllIngredientInStorage()
     {
         _ingredientStorage.Clear();
         for (var i = 0; i < shelfPlate.childCount; i++)
         {
             Destroy(shelfPlate.GetChild(i).gameObject);
         }
+    }
+
+    public void PauseTimer()
+    {
+        timer.Pause();
+    }
+
+    public void ResumeTimer()
+    {
+        if (timer.GetState() == CounterManager.CounterState.Pause)
+            timer.ResumeCounterUp();
     }
 }

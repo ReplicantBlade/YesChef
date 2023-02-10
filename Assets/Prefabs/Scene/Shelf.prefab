@@ -191,5 +191,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ingredientsView: {fileID: 0}
   ingredientsViewContentPrefab: {fileID: 3820900573659693669, guid: 3687db001af998d4a8d694a8ee7a8f4a, type: 3}
+  scorePointPrefab: {fileID: 735445962781418221, guid: 0b23897d72192f549b9c560a49b9b68e, type: 3}
   timer: {fileID: 0}
   shelfPlate: {fileID: 841114316874979390}

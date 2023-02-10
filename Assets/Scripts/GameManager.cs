@@ -1,6 +1,8 @@
 using System.Linq;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 
 public class GameManager : MonoBehaviour
@@ -24,31 +26,41 @@ public class GameManager : MonoBehaviour
         Break,
         Close
     }
-    public RestaurantState State { get; set; }
-
-    [SerializeField]private float gameDurationInSec = 60 * 3;
-    [SerializeField]private CounterManager timer;
+    public RestaurantState RestaurantStatus { get; set; }
+    public int maxCostumerOrderSize = 3;
+    [SerializeField] private float gameDurationInSec = 60 * 3;
+    [SerializeField] private int maxNegativeScore = -100;
+    [SerializeField] private CounterManager timer;
+    [SerializeField] private Animation newHighScore;
+    [SerializeField] private TextMeshProUGUI currentGameScoreUI;
+    [SerializeField] private TextMeshProUGUI highestAchievedScoreUI;
     private readonly List<Transform> _moveOrderList = new();
+    private int _highestAchievedScore;
+    private int _currentGameScore;
+    private UIManager _uiManager;
     private void Start()
     {
-        StartGame();
+        RestaurantStatus = RestaurantState.Break;
+        _uiManager = GameObject.FindWithTag("UIManager").GetComponent<UIManager>();
+        if (!PlayerPrefs.HasKey("Score")) return;
+        _highestAchievedScore = PlayerPrefs.GetInt("Score");
+        _uiManager.ChangeText(highestAchievedScoreUI ,$"{_highestAchievedScore}");
     }
     private void Update()
     {
-        switch (State)
+        switch (RestaurantStatus)
         {
             case RestaurantState.Open:
                 CheckTimer();
                 break;
             case RestaurantState.Break:
-                
+                //Open Main Menu
                 break;
             case RestaurantState.Close:
-                
+                //Open Main Menu
                 break;
         }
     }
-
     private void CheckTimer()
     {
         if (timer.GetState() == CounterManager.CounterState.Stop || timer.GetTime() <= 0)
@@ -56,25 +68,39 @@ public class GameManager : MonoBehaviour
             EndGame();
         }
     }
-
     public void StartGame()
     {
-        State = RestaurantState.Open;
-        timer.InitialCountDown(gameDurationInSec);
+        RestaurantStatus = RestaurantState.Open;
+        _currentGameScore = 0;
+        _uiManager.ChangeText(currentGameScoreUI ,$"{_currentGameScore}");
+        if (timer.GetState() != CounterManager.CounterState.Pause) timer.InitialCountDown(gameDurationInSec);
+        else if (timer.GetState() == CounterManager.CounterState.Pause) timer.ResumeCounterDown();
     }
     public void PauseGame()
     {
-        State = RestaurantState.Break;
+        RestaurantStatus = RestaurantState.Break;
         timer.Pause();
     }
     private void EndGame()
     {
-        State = RestaurantState.Close;
+        RestaurantStatus = RestaurantState.Close;
+        _moveOrderList.Clear();
+        PlayerPrefs.SetInt("Score" ,_highestAchievedScore);
         timer.Stop();
+    }
+    public void NewScore(int score)
+    {
+        _currentGameScore += score < maxNegativeScore ? maxNegativeScore : score;
+        var strScore = _currentGameScore > 0 ? $"+{_currentGameScore}" : $"{_currentGameScore}";
+        _uiManager.ChangeText(currentGameScoreUI ,strScore);
+        if (_currentGameScore <= _highestAchievedScore) return;
+        _highestAchievedScore = _currentGameScore;
+        _uiManager.ChangeText(highestAchievedScoreUI ,strScore);
+        newHighScore.Play();
     }
     public void MovementOrder(Transform standPosition)
     {
-        if (_moveOrderList.Count == 0 || _moveOrderList.Last() != standPosition)
+        if ((_moveOrderList.Count == 0 || _moveOrderList.Last() != standPosition) && RestaurantStatus == RestaurantState.Open)
         {
             _moveOrderList.Add(standPosition);
         }
@@ -84,5 +110,13 @@ public class GameManager : MonoBehaviour
     {
         if (_moveOrderList.Count > 0)
             _moveOrderList.RemoveAt(0);
+    }
+    public void ReloadScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+    public void Quit()
+    {
+        Application.Quit();
     }
 }
