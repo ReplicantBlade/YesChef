@@ -24,9 +24,17 @@ public class IntractableKitchenware : MonoBehaviour
     private void OnMouseDown()
     {
         SendOrder();
+        TriggerMyCollider();
     }
     private void SendOrder()
     {
         GameManager.Instance.MovementOrder(chefStandPosition);
+    }
+
+    private void TriggerMyCollider()
+    {
+        var myBoxCollider = transform.GetComponent<BoxCollider>();
+        myBoxCollider.enabled = false;
+        myBoxCollider.enabled = true;
     }
 }
