@@ -8,9 +8,6 @@ A test project
 Download YesChef.rar to get standalone build of the project
 - https://github.com/ReplicantBlade/YesChef/tree/main/_Build
 
-## Usage
-The gameplay is simple, just Cook 
-
 ## Built With
 - Unity Engine
 - C#
