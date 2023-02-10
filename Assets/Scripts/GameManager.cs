@@ -85,18 +85,18 @@ public class GameManager : MonoBehaviour
     {
         RestaurantStatus = RestaurantState.Close;
         _moveOrderList.Clear();
-        PlayerPrefs.SetInt("Score" ,_highestAchievedScore);
         timer.Stop();
+        if (_currentGameScore <= _highestAchievedScore) return;
+        _highestAchievedScore = _currentGameScore;
+        _uiManager.ChangeText(highestAchievedScoreUI ,$"{_highestAchievedScore}");
+        PlayerPrefs.SetInt("Score" ,_highestAchievedScore);
+        newHighScore.Play();
     }
     public void NewScore(int score)
     {
         _currentGameScore += score < maxNegativeScore ? maxNegativeScore : score;
         var strScore = _currentGameScore > 0 ? $"+{_currentGameScore}" : $"{_currentGameScore}";
         _uiManager.ChangeText(currentGameScoreUI ,strScore);
-        if (_currentGameScore <= _highestAchievedScore) return;
-        _highestAchievedScore = _currentGameScore;
-        _uiManager.ChangeText(highestAchievedScoreUI ,strScore);
-        newHighScore.Play();
     }
     public void MovementOrder(Transform standPosition)
     {

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class EventSystem : MonoBehaviour
@@ -15,5 +16,14 @@ public class EventSystem : MonoBehaviour
             Instance = this;
         }
     }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            GameManager.Instance.PauseGame();
+        }
+    }
+
     public static EventSystem Get() { return Instance; }
 }
