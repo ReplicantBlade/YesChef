@@ -71,7 +71,7 @@ public class Shelf : MonoBehaviour
 
     private void CheckOrderWithStorage()
     {
-        if(!HaveInProgressOrder()) return;
+        if(!HaveInProgressOrder() || _ingredientStorage.Count != _inProgressOrder.Count) return;
         var totalIngredientsInOrder = _inProgressOrder.Count;
         var localCloneStorage = new List<IngredientModel>(_ingredientStorage);
         var localCloneOrders = new List<IngredientModel>(_inProgressOrder);
