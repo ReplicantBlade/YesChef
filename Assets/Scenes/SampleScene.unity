@@ -5588,7 +5588,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxCostumerOrderSize: 3
-  gameDurationInSec: 60
+  gameDurationInSec: 180
   maxNegativeScore: -100
   timer: {fileID: 1423917847}
   newHighScore: {fileID: 1195923827}
