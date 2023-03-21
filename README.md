@@ -2,7 +2,7 @@
 A fun cooking game for aspiring chefs.
 
 ## Introduction
-A test project
+Welcome to YesChef! - the cooking dash game where you chop, cook, and serve your way to becoming a master chef. Get ready to cook up a storm!
 
 ## Getting Started
 Download YesChef.rar to get standalone build of the project
